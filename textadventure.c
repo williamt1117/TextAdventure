@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
 struct Node
 {
@@ -20,15 +22,15 @@ void InitializeNode(struct Node *room, int id, char name[], char desc[])
     strcpy(room->description, desc);
 }
 
-void DisplayNode(struct Node room)
+void DisplayNode(struct Node room, struct Node tree[50])
 {
-    printf("--------------------------------------------------\n"); 
+    printf("==================================================\n"); 
     printf("Name: %s\n\n", room.name);
     printf("Description: %s\n\n", room.description);
-    printf("--------------------------------------------------\n"); 
+    printf("==================================================\n"); 
 
     for (int i = 0; i < 4; i++)
-        if (room.connections[i] != -1) printf ("%i\t", room.connections[i]);
+        if (room.connections[i] != -1) printf ("[%i] - %s\t", room.connections[i], tree[room.connections[i]].name);
 
     printf("\n\n");
 }
@@ -41,9 +43,20 @@ int ValidPath(struct Node room, int moveId)
     return 0;
 }
 
+float randomRange(float low, float high)
+{
+    return ((float)rand() / RAND_MAX) * (high - low) + low;  
+}
+
+void RecursiveTreeGeneration(struct Node startnode, int depth)
+{
+    //To be made :)
+}
 
 int main()
 {
+    srand(0);
+
     struct Node tree[50];
     struct Node* currentNode = &tree[0];
 
@@ -57,11 +70,15 @@ int main()
 
     InitializeNode(&tree[2], 2, "Fields", "large, flat, alberta");
     tree[2].connections[0] = 0;
+    tree[2].connections[1] = 3;
+
+    InitializeNode(&tree[3], 3, "Raspberry Patch", "dark and gloomy, no raspberries!");
+    tree[3].connections[0] = 2;
 
     int gameEnd = 0;
     while(!gameEnd)
     {
-        DisplayNode(*currentNode);
+        DisplayNode(*currentNode, tree);
         printf("Which path would you like to take?: ");
         int chosenPath = -1;
 
@@ -70,5 +87,4 @@ int main()
 
         currentNode = &tree[chosenPath];
     }
-    DisplayNode(tree[0]);
 }
