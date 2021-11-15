@@ -6,7 +6,7 @@
 #define CHILDSPAWNPERCENTAGE 0.75
 #define DEPTH 10
 
-#define ROOMLIBRARYSIZE 14
+#define ROOMLIBRARYSIZE 15
 
 struct Node
 {
@@ -83,7 +83,8 @@ void RoomLibrary(int index, int roomordescription, char stringout[])
         {"Witches Hut", "empty flasks with good juice"},
         {"Bonfire", "kinda hot"},
         {"Birch Forest", "thats a lotta white"},
-        {"Slaughterhouse", "colorful decorations"}};
+        {"Slaughterhouse", "colorful decorations"},
+        {"Bill's House", "so many numbers D:"}};
 
         strcpy(stringout, roomLibrary[index][roomordescription]);
 }
