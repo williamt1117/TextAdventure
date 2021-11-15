@@ -6,6 +6,8 @@
 #define CHILDSPAWNPERCENTAGE 0.75
 #define DEPTH 10
 
+#define ROOMLIBRARYSIZE 14
+
 struct Node
 {
     int id;
@@ -67,7 +69,7 @@ float randomRange(float low, float high)
 
 void RoomLibrary(int index, int roomordescription, char stringout[])
 {
-    char roomLibrary[14][2][150] = 
+    char roomLibrary[ROOMLIBRARYSIZE][2][150] = 
         {{"Asylum", "dark, empty, sad"},
         {"Mansion", "very modern"},
         {"Bakery", "bread is dead. stinky..."},
@@ -99,8 +101,7 @@ void RecursiveTreeGeneration(struct Node *parentNode, struct Tree *myTree, int d
         char name[20];
         char description[150];
 
-        int librarySize = 14;
-        int randomLibraryIndex = (int)randomRange(0, librarySize - 0.00001);
+        int randomLibraryIndex = (int)randomRange(0, ROOMLIBRARYSIZE - 0.00001);
 
         RoomLibrary(randomLibraryIndex, 0, name);
         RoomLibrary(randomLibraryIndex, 1, description);
