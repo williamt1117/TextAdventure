@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define CHILDSPAWNPERCENTAGE 0.75
+#define DEPTH 8
+
 struct Node
 {
     int id;
@@ -15,10 +18,8 @@ struct Node
 
 struct Tree
 {
-    struct Node nodelist[150];
+    struct Node nodelist[1000];
     int index;
-
-    int depth;
 };
 
 void InitializeNode(struct Node *room, int id, char name[], char desc[])
@@ -33,10 +34,9 @@ void InitializeNode(struct Node *room, int id, char name[], char desc[])
     strcpy(room->description, desc);
 }
 
-void InitalizeTree(struct Tree *mytree, int depth)
+void InitalizeTree(struct Tree *mytree)
 {
     mytree->index = 0;
-    mytree->depth = depth;
 }
 
 void DisplayNode(struct Node room, struct Node tree[50])
@@ -47,7 +47,7 @@ void DisplayNode(struct Node room, struct Node tree[50])
     printf("==================================================\n"); 
 
     for (int i = 0; i < 4; i++)
-        if (room.connections[i] != -1) printf ("[%i] - %s\t", room.connections[i], tree[room.connections[i]].name);
+        if (room.connections[i] != -1) printf ("[%i]: %s\t", i+1, tree[room.connections[i]].name);
 
     printf("\n\n");
 }
@@ -78,14 +78,22 @@ void RecursiveTreeGeneration(struct Node *parentNode, struct Tree *myTree, int d
         char name[20];
         char description[150];
 
-        char roomLibrary[6][2][150] = 
+        char roomLibrary[14][2][150] = 
         {{"Asylum", "dark, empty, sad"},
         {"Mansion", "very modern"},
         {"Bakery", "bread is dead stinky"},
         {"High School", "kids used to be here ew"},
         {"Greg's Basement", "I'd rather not say..."},
-        {"Theatre", "large echo echo echo echo"}};
-        int librarySize = 6;
+        {"Theatre", "large echo echo echo echo"},
+        {"Graveyard", "kinda spooky!"},
+        {"Fields", "large, flat, alberta"},
+        {"Raspberry Patch", "dark and gloomy, no raspberries!"},
+        {"Courtyard", "bodies on fun strings"},
+        {"Witches Hut", "empty flasks with good juice"},
+        {"Bonfire", "kinda hot"},
+        {"Birch Forest", "thats a lotta white"},
+        {"Slaughterhouse", "colorful decorations"}};
+        int librarySize = 14;
 
         int randomLibraryIndex = (int)randomRange(0, librarySize - 0.00001);
 
@@ -101,8 +109,8 @@ void RecursiveTreeGeneration(struct Node *parentNode, struct Tree *myTree, int d
         //increment index
         myTree->index++;
 
-        //call function on children (50% chance?)
-        if (randomRange(0, 1) >= 0.5)
+        //call function on children
+        if (randomRange(0, 1) >= (1 - CHILDSPAWNPERCENTAGE))
         {
             RecursiveTreeGeneration(&myTree->nodelist[myTree->index-1], myTree, depth - 1);
         }
@@ -114,7 +122,7 @@ int main()
     srand(time(NULL)); //time(NULL)
 
     struct Tree myTree;
-    InitalizeTree(&myTree, 10);
+    InitalizeTree(&myTree);
 
     struct Node* currentNode = &myTree.nodelist[0];
 
@@ -122,30 +130,18 @@ int main()
     InitializeNode(&myTree.nodelist[myTree.index], myTree.index, "Castle", "brrr spooky castle");
     myTree.index++;
 
-    RecursiveTreeGeneration(currentNode, &myTree, 10);
-
-    /*
-    InitializeNode(&tree[1], 1, "Graveyard", "kinda spooky!");
-    tree[1].connections[0] = 0;
-
-    InitializeNode(&tree[2], 2, "Fields", "large, flat, alberta");
-    tree[2].connections[0] = 0;
-    tree[2].connections[1] = 3;
-
-    InitializeNode(&tree[3], 3, "Raspberry Patch", "dark and gloomy, no raspberries!");
-    tree[3].connections[0] = 2;
-    */
+    RecursiveTreeGeneration(currentNode, &myTree, DEPTH);
 
     int gameEnd = 0;
     while(!gameEnd)
     {
         DisplayNode(*currentNode, myTree.nodelist);
         printf("Which path would you like to take?: ");
-        int chosenPath = -1;
+        int chosenPath = -1; //(will be between 1 and 4 when valid)
 
-        while ((scanf("%i", &chosenPath) != 1) || !ValidPath(*currentNode, chosenPath))
+        while ((scanf("%i", &chosenPath) != 1) || !ValidPath(*currentNode, currentNode->connections[chosenPath - 1])) //VALID PATH NOT WORKING!!!!!!!!!!!!
             printf("Invalid selection. Which path would you like to take?: ");
 
-        currentNode = &myTree.nodelist[chosenPath];
+        currentNode = &myTree.nodelist[currentNode->connections[chosenPath - 1]];
     }
 }
