@@ -4,7 +4,7 @@
 #include <time.h>
 
 #define CHILDSPAWNPERCENTAGE 0.75
-#define DEPTH 8
+#define DEPTH 10
 
 struct Node
 {
@@ -18,7 +18,7 @@ struct Node
 
 struct Tree
 {
-    struct Node nodelist[1000];
+    struct Node nodelist[5000];
     int index;
 };
 
@@ -65,6 +65,27 @@ float randomRange(float low, float high)
     return ((float)rand() / RAND_MAX) * (high - low) + low;  
 }
 
+void RoomLibrary(int index, int roomordescription, char stringout[])
+{
+    char roomLibrary[14][2][150] = 
+        {{"Asylum", "dark, empty, sad"},
+        {"Mansion", "very modern"},
+        {"Bakery", "bread is dead. stinky..."},
+        {"High School", "kids used to be here ew"},
+        {"Greg's Basement", "I'd rather not say..."},
+        {"Theatre", "large echo echo echo echo"},
+        {"Graveyard", "kinda spooky!"},
+        {"Fields", "large, flat, alberta"},
+        {"Raspberry Patch", "dark and gloomy, no raspberries!"},
+        {"Courtyard", "bodies on fun strings"},
+        {"Witches Hut", "empty flasks with good juice"},
+        {"Bonfire", "kinda hot"},
+        {"Birch Forest", "thats a lotta white"},
+        {"Slaughterhouse", "colorful decorations"}};
+
+        strcpy(stringout, roomLibrary[index][roomordescription]);
+}
+
 void RecursiveTreeGeneration(struct Node *parentNode, struct Tree *myTree, int depth)
 {
     if (depth == 0) return;
@@ -78,26 +99,13 @@ void RecursiveTreeGeneration(struct Node *parentNode, struct Tree *myTree, int d
         char name[20];
         char description[150];
 
-        char roomLibrary[14][2][150] = 
-        {{"Asylum", "dark, empty, sad"},
-        {"Mansion", "very modern"},
-        {"Bakery", "bread is dead stinky"},
-        {"High School", "kids used to be here ew"},
-        {"Greg's Basement", "I'd rather not say..."},
-        {"Theatre", "large echo echo echo echo"},
-        {"Graveyard", "kinda spooky!"},
-        {"Fields", "large, flat, alberta"},
-        {"Raspberry Patch", "dark and gloomy, no raspberries!"},
-        {"Courtyard", "bodies on fun strings"},
-        {"Witches Hut", "empty flasks with good juice"},
-        {"Bonfire", "kinda hot"},
-        {"Birch Forest", "thats a lotta white"},
-        {"Slaughterhouse", "colorful decorations"}};
         int librarySize = 14;
-
         int randomLibraryIndex = (int)randomRange(0, librarySize - 0.00001);
 
-        InitializeNode(&myTree->nodelist[myTree->index], myTree->index, roomLibrary[randomLibraryIndex][0], roomLibrary[randomLibraryIndex][1]);
+        RoomLibrary(randomLibraryIndex, 0, name);
+        RoomLibrary(randomLibraryIndex, 1, description);
+
+        InitializeNode(&myTree->nodelist[myTree->index], myTree->index, name, description);
 
         //give it connections to parent and vice versa
         parentNode->connections[parentNode->connectionsindex] = myTree->index;
