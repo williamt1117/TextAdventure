@@ -7,6 +7,7 @@ struct Node
 {
     int id;
     int connections[4]; //list of id's
+    int connectionsindex;
 
     char name[20];
     char description[150];
@@ -14,7 +15,7 @@ struct Node
 
 struct Tree
 {
-    struct Node nodelist[50];
+    struct Node nodelist[150];
     int index;
 
     int depth;
@@ -25,6 +26,8 @@ void InitializeNode(struct Node *room, int id, char name[], char desc[])
     room->id = id;
     for (int i = 0; i < 4; i++)
         room->connections[i] = -1;
+
+    room->connectionsindex = 0;
 
     strcpy(room->name, name);
     strcpy(room->description, desc);
@@ -72,26 +75,43 @@ void RecursiveTreeGeneration(struct Node *parentNode, struct Tree *myTree, int d
     for (int i = 0; i < numberOfBranches; i++)
     {
         //create a new node
-        InitializeNode(myTree->nodelist[myTree->index], myTree->index, "blah", "insert desc");
+        char name[20];
+        char description[150];
+
+        char roomLibrary[6][2][150] = 
+        {{"Asylum", "dark, empty, sad"},
+        {"Mansion", "very modern"},
+        {"Bakery", "bread is dead stinky"},
+        {"High School", "kids used to be here ew"},
+        {"Greg's Basement", "I'd rather not say..."},
+        {"Theatre", "large echo echo echo echo"}};
+        int librarySize = 6;
+
+        int randomLibraryIndex = (int)randomRange(0, librarySize - 0.00001);
+
+        InitializeNode(&myTree->nodelist[myTree->index], myTree->index, roomLibrary[randomLibraryIndex][0], roomLibrary[randomLibraryIndex][1]);
 
         //give it connections to parent and vice versa
-        parentNode->connections[i] = myTree->index;
-        myTree->nodelist[myTree->index].connections = parentNode->id;
+        parentNode->connections[parentNode->connectionsindex] = myTree->index;
+        parentNode->connectionsindex += 1;
+        myTree->nodelist[myTree->index].connections[0] = parentNode->id;
+        myTree->nodelist[myTree->index].connectionsindex += 1;
+        int temp = myTree->nodelist[myTree->index].connectionsindex;
+
+        //increment index
+        myTree->index++;
 
         //call function on children (50% chance?)
         if (randomRange(0, 1) >= 0.5)
         {
-            RecursiveTreeGeneration(myTree->nodelist[myTree->index], myTree, depth - 1);
+            RecursiveTreeGeneration(&myTree->nodelist[myTree->index-1], myTree, depth - 1);
         }
-
-        //increment index
-        myTree->index++;
     }
 }
 
 int main()
 {
-    srand(time(NULL));
+    srand(time(NULL)); //time(NULL)
 
     struct Tree myTree;
     InitalizeTree(&myTree, 10);
@@ -100,8 +120,9 @@ int main()
 
     //declare rooms manually for testing
     InitializeNode(&myTree.nodelist[myTree.index], myTree.index, "Castle", "brrr spooky castle");
+    myTree.index++;
 
-    RecursiveTreeGeneration(currentNode, &myTree, 6);
+    RecursiveTreeGeneration(currentNode, &myTree, 10);
 
     /*
     InitializeNode(&tree[1], 1, "Graveyard", "kinda spooky!");
