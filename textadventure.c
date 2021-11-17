@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define CHILDSPAWNPERCENTAGE 0.75
-#define DEPTH 10
+#define CHILDSPAWNPERCENTAGE 0.60
+#define DEPTH 8
 
 #define ROOMLIBRARYSIZE 15
 
