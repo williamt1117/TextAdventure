@@ -6,15 +6,13 @@
 #define CHILDSPAWNPERCENTAGE 0.60
 #define DEPTH 8
 
-#define ROOMLIBRARYSIZE 15
-
 struct Node
 {
     int id;
     int connections[4]; //list of id's
     int connectionsindex;
 
-    char name[20];
+    char name[30];
     char description[150];
 };
 
@@ -67,29 +65,7 @@ float randomRange(float low, float high)
     return ((float)rand() / RAND_MAX) * (high - low) + low;  
 }
 
-void RoomLibrary(int index, int roomordescription, char stringout[])
-{
-    char roomLibrary[ROOMLIBRARYSIZE][2][150] = 
-        {{"Asylum", "dark, empty, sad"},
-        {"Mansion", "very modern"},
-        {"Bakery", "bread is dead. stinky..."},
-        {"High School", "kids used to be here ew"},
-        {"Greg's Basement", "I'd rather not say..."},
-        {"Theatre", "large echo echo echo echo"},
-        {"Graveyard", "kinda spooky!"},
-        {"Fields", "large, flat, alberta"},
-        {"Raspberry Patch", "dark and gloomy, no raspberries!"},
-        {"Courtyard", "bodies on fun strings"},
-        {"Witches Hut", "empty flasks with good juice"},
-        {"Bonfire", "kinda hot"},
-        {"Birch Forest", "thats a lotta white"},
-        {"Slaughterhouse", "colorful decorations"},
-        {"Bill's House", "so many numbers D:"}};
-
-        strcpy(stringout, roomLibrary[index][roomordescription]);
-}
-
-void RecursiveTreeGeneration(struct Node *parentNode, struct Tree *myTree, int depth)
+void RecursiveTreeGeneration(struct Node *parentNode, struct Tree *myTree, int depth, int librarySize, char library[librarySize][2][150])
 {
     if (depth == 0) return;
     //choose a random number of branches between 2 and 3
@@ -102,12 +78,9 @@ void RecursiveTreeGeneration(struct Node *parentNode, struct Tree *myTree, int d
         char name[20];
         char description[150];
 
-        int randomLibraryIndex = (int)randomRange(0, ROOMLIBRARYSIZE - 0.00001);
+        int randomLibraryIndex = (int)randomRange(0, librarySize - 0.00001);
 
-        RoomLibrary(randomLibraryIndex, 0, name);
-        RoomLibrary(randomLibraryIndex, 1, description);
-
-        InitializeNode(&myTree->nodelist[myTree->index], myTree->index, name, description);
+        InitializeNode(&myTree->nodelist[myTree->index], myTree->index, library[randomLibraryIndex][0], library[randomLibraryIndex][1]);
 
         //give it connections to parent and vice versa
         parentNode->connections[parentNode->connectionsindex] = myTree->index;
@@ -122,14 +95,59 @@ void RecursiveTreeGeneration(struct Node *parentNode, struct Tree *myTree, int d
         //call function on children
         if (randomRange(0, 1) >= (1 - CHILDSPAWNPERCENTAGE))
         {
-            RecursiveTreeGeneration(&myTree->nodelist[myTree->index-1], myTree, depth - 1);
+            RecursiveTreeGeneration(&myTree->nodelist[myTree->index-1], myTree, depth - 1, librarySize, library);
+        }
+    }
+}
+
+void ReadRoomLibrary(FILE* in, int librarysize, char library[librarysize][2][150])
+{
+    for (int i = 0; i < librarysize; i++)
+    {
+        char line[150];
+        fgets(line, 150, in);
+        int hashIndex = 0;
+        for (hashIndex = 0; line[hashIndex] != '#'; hashIndex++)
+        {
+
+        }
+        for (int j = 0; j < hashIndex; j++)
+        {
+            library[i][0][j] = line[j];
+        }
+        library[i][0][hashIndex] = '\0';
+        int j;
+        for (int j = hashIndex + 1; line[j-1] != '\0'; j++)
+        {
+            library[i][1][j-(hashIndex+1)] = line[j];
+            if (line[j] == '\n') 
+                library[i][1][j-(hashIndex+1)] = '\0';
         }
     }
 }
 
 int main()
 {
-    srand(time(NULL)); //time(NULL)
+    srand(time(NULL));
+
+    //open file and find the amount of lines.
+    FILE* inputFile = fopen("roomlibrary.txt", "r");
+    if (inputFile == NULL)
+    {
+        printf("Unable to open input file.\n");
+        return 1;
+    }
+
+    int numOfLines = 0;
+    char line[181]; //name length + seperand + description max length
+    while (fgets(line, 100, inputFile) != NULL)
+    {
+        numOfLines++;
+    }
+    rewind(inputFile);
+    char roomlibrary[numOfLines][2][150];
+
+    ReadRoomLibrary(inputFile, numOfLines, roomlibrary);
 
     struct Tree myTree;
     InitalizeTree(&myTree);
@@ -140,7 +158,7 @@ int main()
     InitializeNode(&myTree.nodelist[myTree.index], myTree.index, "Castle", "brrr spooky castle");
     myTree.index++;
 
-    RecursiveTreeGeneration(currentNode, &myTree, DEPTH);
+    RecursiveTreeGeneration(currentNode, &myTree, DEPTH, numOfLines, roomlibrary);
 
     int gameEnd = 0;
     while(!gameEnd)
