@@ -7,7 +7,7 @@ Theatre#large echo echo echo echo
 Graveyard#kinda spooky!
 Fields#large, flat, alberta
 Raspberry Patch#dark and gloomy, no raspberries!
-Courtyard#bodies on fun strings
+Courtyard#very courteous
 Witches Hut#empty flasks with good juice
 Bonfire#kinda hot
 Birch Forest#thats a lotta white
@@ -25,3 +25,16 @@ Carnival#Pennywise got hands
 Swan Lake#many Swan
 Coffee Shop#hot and mysterious
 Temple University#brain dead 2am
+The Purple Room#everything is different shades of purple. purple cabbage is contained
+Amber Room#It contains hella amber and Russian blood
+The Crab Room#intensive crab rave music
+Anteroom#so much waiting
+Armory#get that bread
+Ballroom#dance baby dance baby
+Laundry Closet#Harry Potter is that you?
+Chalet#possibly swiss, so good for so little
+Conservatory#bing bong bing bong
+Barbershop#hook me up with that fresh cut
+Gong Room#bwoooooooooowowowowowowow
+Sewer#hopscotch time
+Garage#is that the all new Ford F150?
